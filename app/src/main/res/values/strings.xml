@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Hi Gallery</string>
+    <string name="instructions">Please, place your finger on the fingerprint scanner (home or back), to verify your identity</string>
+    <string name="instructions_title">Authenticate</string>
+</resources>
