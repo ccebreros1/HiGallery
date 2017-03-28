@@ -2,7 +2,9 @@ package com.ccebreros.higallery;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
@@ -21,7 +23,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     private CancellationSignal cancellationSignal;
     private Context context;
-
+//Constructor
     public FingerprintHandler(Context mContext) {
         context = mContext;
     }
@@ -67,7 +69,12 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     //when the authentication is good
     public void onAuthenticationSucceeded(
             FingerprintManager.AuthenticationResult result) {
-
         Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show();
+        //Finish with this activity
+        ((Activity)context).finish();
+        //New intent for gallery
+        Intent intent = new Intent(context, GalleryActivity.class);
+        //Jump to activity
+        context.startActivity(intent);
     }
 }
