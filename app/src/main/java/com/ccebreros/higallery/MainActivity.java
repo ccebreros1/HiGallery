@@ -2,19 +2,25 @@ package com.ccebreros.higallery;
 
 //Many of the needed dependencies were found using the tutorial found at
 //http://www.androidauthority.com/how-to-add-fingerprint-authentication-to-your-android-app-747304/
+
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.KeyguardManager;
+import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
-import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -24,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -31,6 +38,7 @@ import javax.crypto.SecretKey;
 public class MainActivity extends AppCompatActivity {
 
     TextView instructionsText;
+    File folder;
     // Declare a string variable for the key we’re going to use in our fingerprint authentication
     private static final String KEY_NAME = "yourKey";
     //Declarate all of the key dependencies used to acces the fingerptint data
@@ -47,8 +55,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        String filepath = ".HiGallery";
         setContentView(R.layout.activity_main);
-        instructionsText = (TextView) findViewById(R.id.instructions_textView);
+        instructionsText = (TextView) findViewById(R.id.instructions_textView); ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        folder = new File("/sdcard/Android/data/com.ccebreros.higallery/files" + File.separator + filepath);
+        Log.d("FOLDER", folder.toString());
+        folder.mkdirs();
+        Toast.makeText(this,folder.toString(), Toast.LENGTH_LONG).show();
         // If the device is running Marshmallow and below, the fingerprint authentication will not be available
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
