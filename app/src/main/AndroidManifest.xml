@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ccebreros.higallery">
 
+    <uses-sdk android:targetSdkVersion="23"></uses-sdk>
+
     <uses-feature android:name="android.hardware.fingerprint"
         android:required="true"></uses-feature>
     <uses-permission android:name="android.permission.USE_FINGERPRINT"></uses-permission>
@@ -25,6 +27,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".GalleryActivity" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
     </application>
 
 </manifest>

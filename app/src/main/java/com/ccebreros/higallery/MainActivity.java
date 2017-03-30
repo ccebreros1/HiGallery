@@ -15,8 +15,8 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +30,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -50,18 +52,48 @@ public class MainActivity extends AppCompatActivity {
     private FingerprintManager fingerprintManager;
     private KeyguardManager keyguardManager;
 
+    //Permission request codes
+    private static final int MY_PERMISSIONS_REQUESTS = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        //Request for permissions
+
+        if (Build.VERSION.SDK_INT < 23) {
+            //Do not need to check the permission
+            loadView();
+            Toast.makeText(this, "No need to request permissions, but the app won't run", Toast.LENGTH_LONG).show();
+        } else {
+            if (checkAndRequestPermissions()) {
+                loadView();
+                //If you have already permitted the permission
+            }
+        }
+
+
+
+
+    }
+
+    public void loadView()
+    {
+        //Create new folder where the images will be saved
+        //Path starts with . so it gets hidden to other apps (Except file explorers)
         String filepath = ".HiGallery";
         setContentView(R.layout.activity_main);
         instructionsText = (TextView) findViewById(R.id.instructions_textView); ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-        folder = new File("/sdcard/Android/data/com.ccebreros.higallery/files" + File.separator + filepath);
-        Log.d("FOLDER", folder.toString());
-        folder.mkdirs();
-        Toast.makeText(this,folder.toString(), Toast.LENGTH_LONG).show();
+        //This provides the entire path of the directory
+        folder = new File("/sdcard/Documents/HiGallery/" + File.separator + filepath);
+        if(!folder.exists())
+        {
+            folder.mkdirs();
+        }
+        //Log.d("FOLDER", folder.toString());
+        //Debug
+        //Toast.makeText(this,folder.toString(), Toast.LENGTH_LONG).show();
         // If the device is running Marshmallow and below, the fingerprint authentication will not be available
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
         {
@@ -122,6 +154,60 @@ public class MainActivity extends AppCompatActivity {
             instructionsText.setText("The fingerprint is not available on this device. It needs to be android 6.0 and above");
         }
     }
+
+    //Method to ask for permissions
+    private boolean checkAndRequestPermissions() {
+
+        //Camera
+        int permissionCAMERA = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+        //Storage
+        int storagePermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+        //Write Storage
+        int writeStoragePermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (storagePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (permissionCAMERA != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+
+
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), MY_PERMISSIONS_REQUESTS);
+            return false;
+        }
+
+        return true;
+    }
+
+    //Prompt to ask for permissions
+    @Override    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUESTS:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "You granted permissions", Toast.LENGTH_LONG).show();
+                    //Load the view once the permissions are granted
+                    loadView();
+                    //Permission Granted Successfully. Write working code here.
+                } else {
+                    //You did not accept the request can not use the functionality.
+                    Toast.makeText(this, "You did not grant permissions", Toast.LENGTH_LONG).show();
+                }
+                break;
+        }
+    }
+
     //For access to right API use the @TargetApi(Number) annoation
     @TargetApi(Build.VERSION_CODES.M)
     //Create the generateKey method that we’ll use to gain access to the Android keystore and generate the encryption key//
