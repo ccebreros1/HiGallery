@@ -9,6 +9,7 @@ import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -28,23 +29,13 @@ public class GalleryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery);
-        //String directory = "/Documents/.HiGallery/";
 
+        File folder = new File("/sdcard/Documents/HiGallery/.HiGallery");
+        File files[] = folder.listFiles();
 
-       /* boolean success = false;
-        if (!folder.exists()) {
-            folder.mkdirs();
-            Toast.makeText(this,"success here", Toast.LENGTH_LONG);
-            success = true;
-        }
-        if (success == true) {
             gridView = (GridView) findViewById(R.id.gallery_grid_view);
             gridView.setAdapter(new ImageAdapter(this));
             Toast.makeText(this,"Loaded", Toast.LENGTH_LONG);
-        } else {
-            Toast.makeText(this,"Nothing here", Toast.LENGTH_LONG);
-
-        }*/
 
     }
 
