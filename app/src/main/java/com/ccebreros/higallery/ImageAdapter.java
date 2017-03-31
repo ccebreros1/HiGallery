@@ -1,7 +1,8 @@
 package com.ccebreros.higallery;
 
 import android.content.Context;
-import android.os.Environment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -9,7 +10,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import java.io.File;
-import java.util.ArrayList;
 
 /**
  * Created by cesar on 2017-03-27.
@@ -20,16 +20,20 @@ public class ImageAdapter extends BaseAdapter {
     private Context context;
     File folder;
 
-    ArrayList<String>images;
+    Bitmap[] images;
+    Bitmap image;
 
-    public ArrayList<String> getImages()
+    public Bitmap[] getImages()
     {
-        folder = new File(Environment.getDataDirectory() +
-                File.separator + ".HiGallery");
-        images = new ArrayList<String>();
+        folder = new File("/sdcard/Documents/HiGallery/.HiGallery");
         File[] files = folder.listFiles();
-        for (File image : files) {
-            images.add(image.toString());
+        images = new Bitmap[folder.listFiles().length];
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        int i = 0;
+        for (File imagePath : files) {
+            image = BitmapFactory.decodeFile(imagePath.getAbsolutePath(), bmOptions);
+            images[i] = image;
+            i++;
         }
         return images;
     }
@@ -37,16 +41,17 @@ public class ImageAdapter extends BaseAdapter {
     public ImageAdapter(Context c)
     {
         context = c;
+        images = getImages();
     }
 
     @Override
     public int getCount() {
-        return images.size();
+        return images.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return images.indexOf(position);
+        return images[position];
     }
 
     @Override
@@ -57,9 +62,9 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
-        imageView.setImageResource(images.indexOf(position));
+        imageView.setImageResource(images[position].getGenerationId());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setLayoutParams(new GridView.LayoutParams(240, 240));
-        return null;
+        return imageView;
     }
 }
