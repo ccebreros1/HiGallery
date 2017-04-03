@@ -29,6 +29,8 @@ public class ImageAdapter extends BaseAdapter {
         File[] files = folder.listFiles();
         images = new Bitmap[folder.listFiles().length];
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inSampleSize = 4;
+        bmOptions.inScaled = true;
         int i = 0;
         for (File imagePath : files) {
             image = BitmapFactory.decodeFile(imagePath.getAbsolutePath(), bmOptions);
@@ -62,9 +64,10 @@ public class ImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
-        imageView.setImageResource(images[position].getGenerationId());
+        imageView.setImageBitmap(images[position]);
+        //imageView.setImageResource(images[position].getGenerationId());
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(240, 240));
+        imageView.setLayoutParams(new GridView.LayoutParams(480, 480));
         return imageView;
     }
 }
