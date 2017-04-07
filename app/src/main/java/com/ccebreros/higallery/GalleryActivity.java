@@ -1,18 +1,20 @@
 package com.ccebreros.higallery;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -66,13 +68,14 @@ public class GalleryActivity extends Activity {
                 //Get bitmap location
                 Uri imageUri = getImageUri(getApplicationContext(), image, position);
 
-                //Launch Gallery or other image viewer
-                Intent intent = new Intent();
-                //intent.setType("image/*");
-                intent.setDataAndType(imageUri, "image/*");
-                intent.setAction(Intent.ACTION_VIEW);
-                //intent.addCategory(Intent.CATEGORY_OPENABLE);
-                startActivityForResult(intent, 1);
+                //Launch other view
+                Intent intent = new Intent(GalleryActivity.this, SingleImageView.class);
+                //Pass in the data
+                Bundle bundle = new Bundle();
+                bundle.putString("IMAGEURL", imageUri.toString());
+                intent.putExtras(bundle);
+                //Start the activity
+                GalleryActivity.this.startActivity(intent);
 
             }
         });
@@ -83,10 +86,45 @@ public class GalleryActivity extends Activity {
                 //Get bitmap location
                 Uri imageUri = getImageUri(getApplicationContext(), image, position);
 
-                Toast.makeText(GalleryActivity.this, imageUri.toString(), Toast.LENGTH_LONG).show();
+                openDialog(view, imageUri.toString());
                 return true;
             }
         });
+    }
+
+    public void deleteImage(String imagePath)
+    {
+        folder = new File(imagePath);
+        try {
+            folder.delete();
+            getImages();
+        }
+        catch (Exception e)
+        {
+            Log.d("DELETEFAIL", e.toString());
+        }
+    }
+
+    public void openDialog(View view, final String imageToDelete){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Are you sureou want to delete the image?");
+                alertDialogBuilder.setPositiveButton("yes",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                deleteImage(imageToDelete);
+                            }
+                        });
+
+        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getImages();
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     public Uri getImageUri(Context inContext, Bitmap inImage, int index)

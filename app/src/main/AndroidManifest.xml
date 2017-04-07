@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".GalleryActivity" />
+        <activity android:name=".SingleImageView" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

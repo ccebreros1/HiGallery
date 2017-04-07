@@ -3,4 +3,5 @@
     <string name="instructions">Please, place your finger on the fingerprint scanner (home or back), to verify your identity</string>
     <string name="instructions_title">Authenticate</string>
     <string name="new_image_button_string">New Image</string>
+    <string name="delete_button">Delete Image</string>
 </resources>

@@ -69,7 +69,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     //when the authentication is good
     public void onAuthenticationSucceeded(
             FingerprintManager.AuthenticationResult result) {
-        Toast.makeText(context, "Success!", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Success!", Toast.LENGTH_SHORT).show();
         //Finish with this activity
         ((Activity)context).finish();
         //New intent for gallery
