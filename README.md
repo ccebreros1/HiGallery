@@ -1,4 +1,4 @@
-# HiGallery
+# Hi Gallery
 
 This app will keep your pictures protected whenever you take photos from it. 
 It uses fingerprint, if you have a compatible phone with android 6.0 and above, to keep the pictures saved on this gallery 
